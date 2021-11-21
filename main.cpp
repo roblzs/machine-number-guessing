@@ -4,58 +4,68 @@
 #include <string>
 using namespace std;
 
-int generate_random_number(){
+void send_instructions(){
+    cout << "Controls:" << endl << "+ bigger" << endl << "- smaller" << endl << "= correct";
+}
+
+string ask_if_correct(){
+    string input = "";
+
+    cout << "Was I correct? ";
+    cin >> input;
+
+    if(input != "+" && input != "-" && input != "="){
+        ask_if_correct();
+    }   
+
+    return input;
+}
+
+bool guess(int& attempt){
     int MIN_INT = 0;
-    int MAX_INT = 100;
+    int MAX_INT = 0;
+    int random_number = 50;
+    bool has_won = false;
+    string was_correct = "";
+
 
     srand(time(0));
 
-    int random_number = (rand() % MAX_INT) + MIN_INT;
+    cout << endl << "My guess is " << random_number << endl;
+    was_correct = ask_if_correct();
 
-    return random_number;
-}
-
-bool check_if_equal(int& correct_number, int& guess){
-    bool correct = false;
-
-    if(guess == correct_number){
-        correct = true;
-    }else if(guess > correct_number){
-        cout << "Correct number is smaller than " << guess << endl;
-    }else if(guess < correct_number){
-        cout << "Correct number is bigger than " << guess << endl;
+    if(was_correct == "-"){
+        MAX_INT -= (rand() % 10);
+        MIN_INT -= (rand() % 10);
+    }else if(was_correct == "+"){
+        MAX_INT = 100;
+        MIN_INT += (rand() % 10);
+    }else if(was_correct == "="){
+        has_won = true;
     }
 
-    return correct;
-}
+    random_number = (rand() % MAX_INT) + MIN_INT;
 
-int guess_the_number(int& correct_number){
-    int guess = 0;
-
-    cout << endl << "Enter Your guess: ";
-    cin >> guess;
-    
-    return guess;
+    return has_won;
 }
 
 int main(){
-    int random_number = generate_random_number();
-
-    cout << "You have 10 attempts to guess the number" << endl;
-
     int attempts = 10;
     bool correct = false;
+    string ready = "";
+    string start = "";
 
-    while(attempts > 0 && !correct){
-        int guess = guess_the_number(random_number);
-        correct = check_if_equal(random_number, guess);
+    cout << "Think of a number between 0 and 100" << endl << endl; 
+
+    while(attempts >= 0 && !correct){
+        correct = guess(attempts);
 
         attempts --;
     }
 
     if(!correct){
-        cout << endl << "You lose!";
+        cout << endl << "I lost!";
     }else{
-        cout << endl << "You win!";
+        cout << endl << "I won!";
     }
 }
